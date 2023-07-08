@@ -15,12 +15,13 @@ register("command", () => {
 let hp,
     maxHp,
     mana,
-    maxMana = 0;
+    maxMana = NaN;
 let manaLock = false;
 
 // Get player information from the action bar
 register("actionbar", (e) => {
-    if (!Settings.active) return;
+    // Only run if the player is in SkyBlock and has the plugin enabled
+    if (!Settings.active || !ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK")) return;
 
     // Get the action bar message
     const msg = ChatLib.removeFormatting(e.message.getText());
@@ -43,7 +44,7 @@ register("actionbar", (e) => {
         // Mana is seperated by curr/max
         const p2 = p1[p1.length - 2].split(" ");
         mana = parseStat(p2[p2.length - 1]);
-    } else if (msg.includes("-") && msg.includes("Mana (") && !manalock) {
+    } else if (msg.includes("-") && msg.includes("Mana (") && !manaLock) {
         // Extract delta mana information
         const p1 = msg.split("-");
         const sub = p1[p1.length - 1].split(" ")[0];
@@ -62,8 +63,8 @@ function parseStat(stat) {
 const ring = new Image("ring.png", "https://raw.githubusercontent.com/hololb/StatsRing/main/assets/ring.png");
 
 // Percentage text boxes
-const hpPercent = new Text("0%", 0, 0).setColor(Renderer.RED);
-const manaPercent = new Text("0%", 0, 0).setColor(Renderer.AQUA);
+const hpPercent = new Text("", 0, 0).setColor(Renderer.RED);
+const manaPercent = new Text("", 0, 0).setColor(Renderer.AQUA);
 
 hpPercent.setScale(0.75);
 manaPercent.setScale(0.75);
@@ -72,7 +73,10 @@ manaPercent.setShadow(true);
 
 // Render stats as the dual ring
 register("renderOverlay", () => {
-    if (!Settings.active) return;
+    // Don't render if values cannot be calculated
+    const valuesAreNaN = isNaN(hp) || isNaN(maxHp) || isNaN(mana) || isNaN(maxMana);
+    if (!Settings.active || valuesAreNaN || !ChatLib.removeFormatting(Scoreboard.getTitle()).includes("SKYBLOCK"))
+        return;
 
     // Calculate center of screen
     const xCenter = Renderer.screen.getWidth() / 2;
