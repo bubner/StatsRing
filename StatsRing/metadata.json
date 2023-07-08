@@ -1,0 +1,9 @@
+{
+    "name": "StatsRing",
+    "creator": "holo",
+    "description": "ct module to show rings of health and mana. settings: /ring",
+    "helpMessage": "/ring",
+    "version": "1.0.0",
+    "entry": "main.js",
+    "requires": ["Vigilance"]
+}
