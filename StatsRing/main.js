@@ -12,9 +12,9 @@ register("command", () => {
     Settings.openGUI();
 }).setName("ring");
 
-let hp,
-    maxHp,
-    mana,
+let hp = NaN,
+    maxHp = NaN,
+    mana = NaN,
     maxMana = NaN;
 let manaLock = false;
 
@@ -86,9 +86,18 @@ register("renderOverlay", () => {
     const ringSize = 35;
     Renderer.drawImage(ring, xCenter - ringSize / 2, yCenter - ringSize / 2, ringSize, ringSize);
 
+    // Health calculations
+    const percentage = Math.round((hp / maxHp) * 100);
+    const hpColour = Renderer.color(
+        255, // r
+        percentage > 100 ? 217 : 0, // g
+        0, // b
+        255 // a
+    );
+
     // Health bar
     Renderer.drawRect(
-        Renderer.RED,
+        hpColour,
         xCenter - 10,
         yCenter + 8 - Math.min(15, 15 * (hp / maxHp)),
         1.5,
@@ -107,7 +116,8 @@ register("renderOverlay", () => {
     if (!Settings.percentage) return;
 
     // Draw HP percentages
-    hpPercent.setString(`${Math.min(100, Math.round((hp / maxHp) * 100))}%`);
+    hpPercent.setColor(hpColour);
+    hpPercent.setString(percentage + "%");
     hpPercent.setX(xCenter - 32);
     hpPercent.setY(yCenter - hpPercent.getHeight() / 2);
     hpPercent.draw();
