@@ -60,7 +60,7 @@ function parseStat(stat) {
 }
 
 // Ring image
-const ring = new Image("ring.png", "https://raw.githubusercontent.com/hololb/StatsRing/main/assets/ring.png");
+const ring = new Image("ring.png", "https://raw.githubusercontent.com/bubner/StatsRing/main/assets/ring.png");
 
 // Percentage text boxes
 const hpPercent = new Text("", 0, 0).setColor(Renderer.RED);
