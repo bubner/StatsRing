@@ -1,6 +1,6 @@
 import { @Vigilant, @SwitchProperty } from "../Vigilance/index.js";
 
-@Vigilant("StatsRing", "§lStatsRing by holo")
+@Vigilant("StatsRing", "§lStatsRing Health and Mana ring")
 
 class Settings {
     constructor() {
