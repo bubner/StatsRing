@@ -1,9 +1,9 @@
 {
     "name": "StatsRing",
     "creator": "bubner",
-    "description": "ct module to show rings of health and mana. settings: /ring",
+    "description": "Health and Mana display ring. [/ring]",
     "helpMessage": "/ring",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "entry": "main.js",
     "requires": ["Vigilance"]
 }
