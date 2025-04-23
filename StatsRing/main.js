@@ -174,8 +174,9 @@ register("renderOverlay", () => {
 
     // Draw HP percentages
     hpPercent.setColor(hpColour);
-    hpPercent.setString(Math.round(healthPercent) + "%");
-    hpPercent.setX(healthPercent >= 100 ? xCenter - 32 : xCenter - 28);
+    const roundedHpPercent = Math.round(healthPercent);
+    hpPercent.setString(roundedHpPercent + "%");
+    hpPercent.setX(roundedHpPercent >= 100 ? xCenter - 32 : xCenter - 28);
     hpPercent.setY(yCenter - hpPercent.getHeight() / 2);
     hpPercent.draw();
 
