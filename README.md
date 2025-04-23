@@ -1,5 +1,12 @@
 # StatsRing [ChatTriggers](https://github.com/ChatTriggers/ChatTriggers) module
-Display Health and Mana in a ring around the crosshair on Hypixel SkyBlock. Optionally include percentages.
+Display Health and Mana in a ring around the crosshair on Hypixel SkyBlock.
+
+Optionally include percentages, visual alerts on low stats, and smooth animation. Useful for combat across SkyBlock.
+
+![StatsRing](https://github.com/user-attachments/assets/12fdaaeb-db4d-4c34-886c-b4a1e29bb5a0)
+
+To manually install, download the latest [release](https://github.com/bubner/StatsRing/releases/latest) and extract the `StatsRing` folder to `%appdata%/.minecraft/config/ChatTriggers/modules` in its folder on Windows (equivalently `~/.minecraft ...`).
+You may also need to `/ct import Vigilance` in-game before use, as it is a dependency.
 
 <i>Open settings menu:</i> /ring
 
