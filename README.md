@@ -10,4 +10,7 @@ You may also need to `/ct import Vigilance` in-game before use, as it is a depen
 
 <i>Open settings menu:</i> /ring
 
+### Known issues
+- If holding an item that does not show your current health and mana on your action bar (such as a drill), the health and mana values will be frozen. The solution would be to predict mana and health when unavailable (like how SBA does it).
+
 ###### Copyright (c) 2023 Lucas Bubner
