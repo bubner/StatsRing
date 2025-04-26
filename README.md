@@ -11,6 +11,6 @@ You may also need to `/ct import Vigilance` in-game before use, as it is a depen
 <i>Open settings menu:</i> /ring
 
 ### Known issues
-- If holding an item that does not show your current health or mana on your action bar (such as a drill hiding mana), the health or mana (or both) values will be frozen. The solution would be to predict mana and health when unavailable (like how SBA does it).
+- If holding an item that does not show your current health or mana on your action bar (such as a drill hiding mana), the health or mana (or both) values will be frozen. The solution would be to predict mana and health when unavailable (like how SBA does it). StatsRing v2.1.0 and newer automatically changes the colour of the mana ring to grey to indicate a failure reading the current mana value. Note that if health cannot be read, it will remain frozen like previous versions.
 
 ###### Copyright (c) 2023 Lucas Bubner
