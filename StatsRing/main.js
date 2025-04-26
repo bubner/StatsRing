@@ -16,11 +16,12 @@ let hp = NaN,
     maxHp = NaN,
     mana = NaN,
     maxMana = NaN;
-let manaLock = false;
+let manaReadStatus = 0;
+let secInterval = 0.4;
 let hpScale = 0,
     manaScale = 0;
 let ticks = 0,
-    fourHundredMilliCycle = false;
+    cycle = false;
 
 register("actionbar", (e) => {
     // Only run if the player is in SkyBlock and has the plugin enabled
@@ -35,10 +36,13 @@ register("actionbar", (e) => {
         hp = parseStat(hpStats.split("/")[0]);
         maxHp = parseStat(hpStats.split("/")[1]);
     }
+    // We do check mana if it is not there to display if it is frozen, but we don't do
+    // the same for health as usually it would be there in all circumstances. This
+    // may change if there is such situation and it needs defining.
 
-    // Extract direct mana information
+    // Extract mana information
     if (msg.includes("✎")) {
-        manaLock = false;
+        manaReadStatus = 0;
         // Find mana information on action bar
         const manaStats = msg.split("✎")[0];
         // Find RHS of action bar, which is where the info will be
@@ -47,13 +51,8 @@ register("actionbar", (e) => {
         // Mana is seperated by curr/max
         const p2 = p1[p1.length - 2].split(" ");
         mana = parseStat(p2[p2.length - 1]);
-    } else if (msg.includes("-") && msg.includes("Mana (") && !manaLock) {
-        // Extract delta mana information
-        const p1 = msg.split("-");
-        const sub = p1[p1.length - 1].split(" ")[0];
-        mana -= parseStat(sub);
-        // Only run extraction once
-        manaLock = true;
+    } else {
+        manaReadStatus = msg.includes("NOT ENOUGH MANA") ? 2 : 1;
     }
 });
 
@@ -98,14 +97,14 @@ register("worldUnload", () => {
     hpScale = 0;
     manaScale = 0;
     ticks = 0;
-    fourHundredMilliCycle = false;
+    cycle = false;
 });
 
 register("tick", () => {
     ticks++;
-    if (ticks >= 20 * 0.4) {
+    if (ticks >= 20 * secInterval) {
         // 20 ticks/sec
-        fourHundredMilliCycle = !fourHundredMilliCycle;
+        cycle = !cycle;
         ticks = 0;
     }
 });
@@ -141,7 +140,7 @@ register("renderOverlay", () => {
     const currentHpScale = Math.min(heightScale, heightScale * (hp / maxHp));
     hpScale = Settings.interpolateBars ? lerp(hpScale, currentHpScale, 0.1) : currentHpScale;
     const lowHpPercent = parseFloat(Settings.alertLowHpPercent);
-    if (!isNaN(lowHpPercent) && healthPercent <= lowHpPercent && fourHundredMilliCycle) {
+    if (!isNaN(lowHpPercent) && healthPercent <= lowHpPercent && cycle) {
         hpPercentLowText.setX(xCenter - 13.5);
         hpPercentLowText.setY(yCenter - 21.5);
         hpPercentLowText.draw();
@@ -161,14 +160,19 @@ register("renderOverlay", () => {
     const currentManaScale = Math.min(heightScale, heightScale * (mana / maxMana));
     manaScale = Settings.interpolateBars ? lerp(manaScale, currentManaScale, 0.1) : currentManaScale;
     const lowManaPercent = parseFloat(Settings.alertLowManaPercent);
-    if (!isNaN(lowManaPercent) && manaPercentage <= lowManaPercent && !fourHundredMilliCycle) {
+    secInterval = manaReadStatus === 2 ? 0.2 : 0.4;
+    if (manaReadStatus === 1) {
+        Renderer.drawRect(darkenRgb(Renderer.GRAY, 0.25), xCenter + 9, yCenter + 10 - heightScale, 2.5, heightScale - manaScale);
+    } else if (((!isNaN(lowManaPercent) && manaPercentage <= lowManaPercent) || manaReadStatus === 2) && !cycle) {
+        const fore = manaReadStatus === 2 ? Renderer.RED : Settings.interpolateColour ? Renderer.AQUA : Renderer.WHITE;
+        manaPercentLowText.setColor(fore);
         manaPercentLowText.setX(xCenter + 6.5);
         manaPercentLowText.setY(yCenter + 12.5);
         manaPercentLowText.draw();
-        manaColour = Settings.interpolateColour ? Renderer.AQUA : Renderer.WHITE;
+        manaColour = fore;
         Renderer.drawRect(darkenRgb(manaColour, 0.25), xCenter + 9, yCenter + 10 - heightScale, 2.5, heightScale - manaScale);
     }
-    Renderer.drawRect(manaColour, xCenter + 9, yCenter + 10 - manaScale, 2.5, manaScale);
+    Renderer.drawRect(manaReadStatus !== 1 ? manaColour : Renderer.GRAY, xCenter + 9, yCenter + 10 - manaScale, 2.5, manaScale);
 
     if (!Settings.percentage) return;
 
@@ -181,7 +185,7 @@ register("renderOverlay", () => {
     hpPercent.draw();
 
     // Draw mana percentages
-    manaPercent.setColor(manaColour);
+    manaPercent.setColor(manaReadStatus !== 1 ? manaColour : Renderer.GRAY);
     manaPercent.setString(`${Math.round(manaPercentage)}%`);
     manaPercent.setX(xCenter + 15);
     manaPercent.setY(yCenter - manaPercent.getHeight() / 2);
