@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "statsring",
+	"version": "${version}",
+	"name": "StatsRing",
+	"description": "Hypixel SkyBlock vital stats ring display",
+	"authors": [
+		"bubner"
+	],
+	"contact": {
+		"homepage": "https://github.com/bubner/StatsRing",
+		"sources": "https://github.com/bubner/StatsRing"
+	},
+	"license": "MIT",
+	"icon": "assets/statsring/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"me.bubner.statsring.StatsRing"
+		]
+	},
+	"mixins": [
+	],
+	"depends": {
+		"fabricloader": ">=0.18.4",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

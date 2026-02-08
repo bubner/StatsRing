@@ -1,9 +1,0 @@
-{
-    "name": "StatsRing",
-    "creator": "bubner",
-    "description": "Health and Mana display ring. [/ring]",
-    "helpMessage": "/ring",
-    "version": "2.0.0",
-    "entry": "main.js",
-    "requires": ["Vigilance"]
-}
