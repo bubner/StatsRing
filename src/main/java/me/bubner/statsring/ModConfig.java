@@ -11,7 +11,7 @@ import java.util.Properties;
  * Properties-based configuration for StatsRing.
  * Serialises settings to a .properties file in the Fabric config directory.
  *
- * @author Lucas Bubner, 2023-2025
+ * @author Lucas Bubner, 2023 (Original CT module)
  */
 public class ModConfig {
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("statsring.properties");

@@ -11,7 +11,7 @@ import net.minecraft.network.chat.Component;
  * Cloth Config screen for StatsRing settings.
  * Replaces the original Vigilance config GUI from config.js.
  *
- * @author Lucas Bubner, 2023-2025
+ * @author Lucas Bubner, 2023 (Original CT module)
  */
 public class ConfigScreen {
     private ConfigScreen() {
@@ -21,10 +21,10 @@ public class ConfigScreen {
      * Create the Cloth Config settings screen.
      *
      * @param parent the parent screen to return to
+     * @param config the mod configuration instance
      * @return the built config screen
      */
-    public static Screen create(Screen parent) {
-        ModConfig config = StatsRing.CONFIG;
+    public static Screen create(Screen parent, ModConfig config) {
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Component.empty()
