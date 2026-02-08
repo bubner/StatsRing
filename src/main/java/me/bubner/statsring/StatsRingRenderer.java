@@ -118,6 +118,7 @@ public class StatsRingRenderer {
         }
     }
 
+    // HudRenderCallback is deprecated in favour of HudElementRegistry, but still functional
     @SuppressWarnings("deprecation")
     private void onHudRender(GuiGraphics graphics, DeltaTracker deltaTracker) {
         boolean valuesAreNaN = Float.isNaN(hp) || Float.isNaN(maxHp) || Float.isNaN(mana) || Float.isNaN(maxMana);
@@ -236,7 +237,7 @@ public class StatsRingRenderer {
 
     private static float parseStat(String stat) {
         try {
-            return Float.parseFloat(stat.replaceAll("[^0-9]", ""));
+            return Integer.parseInt(stat.replaceAll(",", "").trim());
         } catch (NumberFormatException e) {
             return Float.NaN;
         }

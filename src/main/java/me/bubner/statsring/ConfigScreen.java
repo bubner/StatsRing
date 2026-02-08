@@ -3,6 +3,7 @@ package me.bubner.statsring;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -26,7 +27,12 @@ public class ConfigScreen {
         ModConfig config = StatsRing.CONFIG;
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
-                .setTitle(Component.literal("\u00A7lStats Ring: \u00A7r\u00A7cHealth \u00A7rand \u00A7bMana \u00A7rring"));
+                .setTitle(Component.empty()
+                        .append(Component.literal("Stats Ring: ").withStyle(ChatFormatting.BOLD))
+                        .append(Component.literal("Health ").withStyle(ChatFormatting.RED))
+                        .append(Component.literal("and "))
+                        .append(Component.literal("Mana ").withStyle(ChatFormatting.AQUA))
+                        .append(Component.literal("ring")));
 
         ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
