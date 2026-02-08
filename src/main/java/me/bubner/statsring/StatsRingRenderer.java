@@ -11,7 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import org.joml.Matrix3x2fStack;
 
@@ -24,7 +24,7 @@ import static me.bubner.statsring.Util.*;
  * @author Lucas Bubner, 2023 (Original CT module)
  */
 public class StatsRingRenderer implements HudElement {
-    private static final Identifier RING_TEXTURE = Identifier.fromNamespaceAndPath("statsring", "ring-2.png");
+    private static final ResourceLocation RING_TEXTURE = ResourceLocation.fromNamespaceAndPath("statsring", "ring-2.png");
 
     private static final int HEIGHT_SCALE = 21;
     private static final int RING_SIZE = 35;
@@ -64,7 +64,7 @@ public class StatsRingRenderer implements HudElement {
         ClientTickEvents.END_CLIENT_TICK.register(client -> onTick());
         HudElementRegistry.attachElementAfter(
                 VanillaHudElements.CROSSHAIR,
-                Identifier.fromNamespaceAndPath("statsring", "ring"),
+                ResourceLocation.fromNamespaceAndPath("statsring", "ring"),
                 this
         );
     }
@@ -132,7 +132,7 @@ public class StatsRingRenderer implements HudElement {
         if (config.getBackingImage()) {
             int ringX = xCenter - RING_SIZE / 2;
             int ringY = yCenter - RING_SIZE / 2;
-            graphics.blitSprite(RenderPipelines.GUI_TEXTURED, RING_TEXTURE, ringX, ringY, RING_SIZE, RING_SIZE);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, RING_TEXTURE, ringX, ringY, 0, 0, RING_SIZE, RING_SIZE, RING_SIZE, RING_SIZE);
         }
 
         // === Health bar ===
