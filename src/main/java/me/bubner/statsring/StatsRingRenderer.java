@@ -26,17 +26,35 @@ public class StatsRingRenderer implements HudElement {
     private static final int HEIGHT_SCALE = 21;
     private static final int RING_SIZE = 35;
     private static final int BAR_WIDTH = 3;
+    private static final float PERCENT_SCALE = 0.75f;
+
+    private static final int HP_BAR_X_OFFSET = -11;
+    private static final int MANA_BAR_X_OFFSET = 9;
+    private static final int BAR_BOTTOM_Y_OFFSET = 10;
+
+    private static final int HP_ALERT_X_OFFSET = -14;
+    private static final int HP_ALERT_Y_OFFSET = -22;
+    private static final int MANA_ALERT_X_OFFSET = 7;
+    private static final int MANA_ALERT_Y_OFFSET = 13;
+
+    private static final int HP_PERCENT_X_OFFSET_WIDE = -32;
+    private static final int HP_PERCENT_X_OFFSET = -28;
+    private static final int MANA_PERCENT_X_OFFSET = 15;
+
+    private static final int NOT_ENOUGH_MANA_LATCH_TICKS = 40;
 
     private static final int COLOR_RED = 0xFFFF0000;
     private static final int COLOR_AQUA = 0xFF00FFFF;
     private static final int COLOR_WHITE = 0xFFFFFFFF;
     private static final int COLOR_GRAY = 0xFF808080;
+
     private final ModConfig config;
     private float hp = Float.NaN;
     private float maxHp = Float.NaN;
     private float mana = Float.NaN;
     private float maxMana = Float.NaN;
     private ManaReadStatus manaReadStatus = ManaReadStatus.OK;
+    private int notEnoughManaLatchTicks = 0;
     private float secInterval = 0.4f;
     private float hpScale = 0;
     private float manaScale = 0;
@@ -79,7 +97,9 @@ public class StatsRingRenderer implements HudElement {
 
         // Extract mana information
         if (msg.contains("✎")) {
-            manaReadStatus = ManaReadStatus.OK;
+            if (notEnoughManaLatchTicks <= 0) {
+                manaReadStatus = ManaReadStatus.OK;
+            }
             String manaStats = msg.split("✎")[0];
             String[] manaParts = manaStats.split("/");
             if (manaParts.length >= 2) {
@@ -88,7 +108,12 @@ public class StatsRingRenderer implements HudElement {
                 mana = Util.parseStat(p2[p2.length - 1]);
             }
         } else {
-            manaReadStatus = msg.contains("NOT ENOUGH MANA") ? ManaReadStatus.NOT_ENOUGH_MANA : ManaReadStatus.FROZEN;
+            if (msg.contains("NOT ENOUGH MANA")) {
+                manaReadStatus = ManaReadStatus.NOT_ENOUGH_MANA;
+                notEnoughManaLatchTicks = NOT_ENOUGH_MANA_LATCH_TICKS;
+            } else if (notEnoughManaLatchTicks <= 0) {
+                manaReadStatus = ManaReadStatus.FROZEN;
+            }
         }
     }
 
@@ -101,6 +126,7 @@ public class StatsRingRenderer implements HudElement {
         manaScale = 0;
         ticks = 0;
         cycle = false;
+        notEnoughManaLatchTicks = 0;
     }
 
     private void onTick() {
@@ -108,6 +134,12 @@ public class StatsRingRenderer implements HudElement {
         if (ticks >= (int) (20 * secInterval)) {
             cycle = !cycle;
             ticks = 0;
+        }
+        if (notEnoughManaLatchTicks > 0) {
+            notEnoughManaLatchTicks--;
+            if (notEnoughManaLatchTicks <= 0) {
+                manaReadStatus = ManaReadStatus.OK;
+            }
         }
     }
 
@@ -145,12 +177,12 @@ public class StatsRingRenderer implements HudElement {
 
         float lowHpPercent = config.getAlertLowHpPercent();
         if (lowHpPercent >= 0 && healthPercent <= lowHpPercent && cycle) {
-            Util.drawBoldText(graphics, mc, "!!!", xCenter - 14, yCenter - 22, hpColour);
+            Util.drawBoldText(graphics, mc, "!!!", xCenter + HP_ALERT_X_OFFSET, yCenter + HP_ALERT_Y_OFFSET, hpColour);
             hpColour = config.getInterpolateColour() ? COLOR_RED : COLOR_WHITE;
-            graphics.fill(xCenter - 11, yCenter + 10 - HEIGHT_SCALE, xCenter - 11 + BAR_WIDTH, yCenter + 10 - hpBarHeight, Util.darkenRgb(hpColour, 0.25f));
+            graphics.fill(xCenter + HP_BAR_X_OFFSET, yCenter + BAR_BOTTOM_Y_OFFSET - HEIGHT_SCALE, xCenter + HP_BAR_X_OFFSET + BAR_WIDTH, yCenter + BAR_BOTTOM_Y_OFFSET - hpBarHeight, Util.darkenRgb(hpColour, 0.25f));
         }
 
-        graphics.fill(xCenter - 11, yCenter + 10 - hpBarHeight, xCenter - 11 + BAR_WIDTH, yCenter + 10, hpColour);
+        graphics.fill(xCenter + HP_BAR_X_OFFSET, yCenter + BAR_BOTTOM_Y_OFFSET - hpBarHeight, xCenter + HP_BAR_X_OFFSET + BAR_WIDTH, yCenter + BAR_BOTTOM_Y_OFFSET, hpColour);
 
         // === Mana bar ===
         float manaPercentage = Math.min(100f, (mana / maxMana) * 100f);
@@ -172,31 +204,30 @@ public class StatsRingRenderer implements HudElement {
         secInterval = manaReadStatus == ManaReadStatus.NOT_ENOUGH_MANA ? 0.2f : 0.4f;
 
         if (manaReadStatus == ManaReadStatus.FROZEN) {
-            graphics.fill(xCenter + 9, yCenter + 10 - HEIGHT_SCALE, xCenter + 9 + BAR_WIDTH, yCenter + 10 - manaBarHeight, Util.darkenRgb(COLOR_GRAY, 0.25f));
+            graphics.fill(xCenter + MANA_BAR_X_OFFSET, yCenter + BAR_BOTTOM_Y_OFFSET - HEIGHT_SCALE, xCenter + MANA_BAR_X_OFFSET + BAR_WIDTH, yCenter + BAR_BOTTOM_Y_OFFSET - manaBarHeight, Util.darkenRgb(COLOR_GRAY, 0.25f));
         } else if (((lowManaPercent >= 0 && manaPercentage <= lowManaPercent) || manaReadStatus == ManaReadStatus.NOT_ENOUGH_MANA) && !cycle) {
             int foreColour = manaReadStatus == ManaReadStatus.NOT_ENOUGH_MANA ? COLOR_RED : (config.getInterpolateColour() ? COLOR_AQUA : COLOR_WHITE);
-            Util.drawBoldText(graphics, mc, "!!!", xCenter + 7, yCenter + 13, foreColour);
+            Util.drawBoldText(graphics, mc, "!!!", xCenter + MANA_ALERT_X_OFFSET, yCenter + MANA_ALERT_Y_OFFSET, foreColour);
             manaColour = foreColour;
-            graphics.fill(xCenter + 9, yCenter + 10 - HEIGHT_SCALE, xCenter + 9 + BAR_WIDTH, yCenter + 10 - manaBarHeight, Util.darkenRgb(manaColour, 0.25f));
+            graphics.fill(xCenter + MANA_BAR_X_OFFSET, yCenter + BAR_BOTTOM_Y_OFFSET - HEIGHT_SCALE, xCenter + MANA_BAR_X_OFFSET + BAR_WIDTH, yCenter + BAR_BOTTOM_Y_OFFSET - manaBarHeight, Util.darkenRgb(manaColour, 0.25f));
         }
 
         int manaBarColour = manaReadStatus != ManaReadStatus.FROZEN ? manaColour : COLOR_GRAY;
-        graphics.fill(xCenter + 9, yCenter + 10 - manaBarHeight, xCenter + 9 + BAR_WIDTH, yCenter + 10, manaBarColour);
+        graphics.fill(xCenter + MANA_BAR_X_OFFSET, yCenter + BAR_BOTTOM_Y_OFFSET - manaBarHeight, xCenter + MANA_BAR_X_OFFSET + BAR_WIDTH, yCenter + BAR_BOTTOM_Y_OFFSET, manaBarColour);
 
         // === Percentages ===
         if (!config.getPercentage()) return;
 
-        float scale = 0.75f;
-        int lineHeight = Math.round(mc.font.lineHeight * scale / 2f);
+        int lineHeight = Math.round(mc.font.lineHeight * PERCENT_SCALE / 2f);
 
         // HP percentage
         String hpText = Math.round(healthPercent) + "%";
-        int hpTextX = Math.round(healthPercent) >= 100 ? xCenter - 32 : xCenter - 28;
+        int hpTextX = Math.round(healthPercent) >= 100 ? xCenter + HP_PERCENT_X_OFFSET_WIDE : xCenter + HP_PERCENT_X_OFFSET;
         int hpTextY = yCenter - lineHeight;
         Matrix3x2fStack pose = graphics.pose();
         pose.pushMatrix();
         pose.translate(hpTextX, hpTextY);
-        pose.scale(scale);
+        pose.scale(PERCENT_SCALE);
         pose.translate(-hpTextX, -hpTextY);
         graphics.drawString(mc.font, hpText, hpTextX, hpTextY, hpColour, true);
         pose.popMatrix();
@@ -204,11 +235,11 @@ public class StatsRingRenderer implements HudElement {
         // Mana percentage
         int manaTextColour = manaReadStatus != ManaReadStatus.FROZEN ? manaColour : COLOR_GRAY;
         String manaText = Math.round(manaPercentage) + "%";
-        int manaTextX = xCenter + 15;
+        int manaTextX = xCenter + MANA_PERCENT_X_OFFSET;
         int manaTextY = yCenter - lineHeight;
         pose.pushMatrix();
         pose.translate(manaTextX, manaTextY);
-        pose.scale(scale);
+        pose.scale(PERCENT_SCALE);
         pose.translate(-manaTextX, -manaTextY);
         graphics.drawString(mc.font, manaText, manaTextX, manaTextY, manaTextColour, true);
         pose.popMatrix();
