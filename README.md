@@ -2,6 +2,8 @@
 Display Health and Mana in a ring around the crosshair on Hypixel SkyBlock.
 
 **New:** Ported from a 1.8.9 ChatTriggers module into a 1.21.10 Fabric mod.
+The Fabric version of StatsRing depends on the [Cloth Config API](https://modrinth.com/mod/cloth-config).
+
 
 Optionally include percentages, visual alerts on low stats, and smooth animation. Useful for combat across SkyBlock.
 
