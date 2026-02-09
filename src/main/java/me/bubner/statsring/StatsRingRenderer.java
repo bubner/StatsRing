@@ -12,7 +12,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
 import org.joml.Matrix3x2fStack;
 
 import static me.bubner.statsring.Util.*;
@@ -34,22 +33,17 @@ public class StatsRingRenderer implements HudElement {
     private static final int COLOR_AQUA = 0xFF00FFFF;
     private static final int COLOR_WHITE = 0xFFFFFFFF;
     private static final int COLOR_GRAY = 0xFF808080;
-
+    private final ModConfig config;
     private float hp = Float.NaN;
     private float maxHp = Float.NaN;
     private float mana = Float.NaN;
     private float maxMana = Float.NaN;
-
     private ManaReadStatus manaReadStatus = ManaReadStatus.OK;
     private float secInterval = 0.4f;
-
     private float hpScale = 0;
     private float manaScale = 0;
-
     private int ticks = 0;
     private boolean cycle = false;
-
-    private final ModConfig config;
 
     public StatsRingRenderer(ModConfig config) {
         this.config = config;
