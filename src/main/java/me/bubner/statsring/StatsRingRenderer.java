@@ -29,17 +29,17 @@ public class StatsRingRenderer implements HudElement {
     private static final float PERCENT_SCALE = 0.75f;
 
     private static final int HP_BAR_X_OFFSET = -11;
-    private static final int MANA_BAR_X_OFFSET = 9;
+    private static final int MANA_BAR_X_OFFSET = 7;
     private static final int BAR_BOTTOM_Y_OFFSET = 10;
 
     private static final int HP_ALERT_X_OFFSET = -14;
     private static final int HP_ALERT_Y_OFFSET = -22;
-    private static final int MANA_ALERT_X_OFFSET = 7;
+    private static final int MANA_ALERT_X_OFFSET = 5;
     private static final int MANA_ALERT_Y_OFFSET = 13;
 
     private static final int HP_PERCENT_X_OFFSET_WIDE = -32;
     private static final int HP_PERCENT_X_OFFSET = -28;
-    private static final int MANA_PERCENT_X_OFFSET = 15;
+    private static final int MANA_PERCENT_X_OFFSET = 13;
 
     private static final int NOT_ENOUGH_MANA_LATCH_TICKS = 40;
 
