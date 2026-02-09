@@ -8,12 +8,16 @@ import net.minecraft.world.scores.DisplaySlot;
 import net.minecraft.world.scores.Objective;
 import net.minecraft.world.scores.Scoreboard;
 
+import java.util.regex.Pattern;
+
 /**
  * Shared utility methods for StatsRing rendering.
  *
  * @author Lucas Bubner, 2023 (Original CT module)
  */
 public final class Util {
+    private static final Pattern COMMAS_FORMAT_COLOURS = Pattern.compile("(,|§.|§$)");
+
     private Util() {
     }
 
@@ -29,7 +33,7 @@ public final class Util {
     public static float parseStat(String stat) {
         try {
             // Remove any commas or format colours
-            return Integer.parseInt(stat.replaceAll("(,|§.|§$)", "").trim());
+            return Integer.parseInt(COMMAS_FORMAT_COLOURS.matcher(stat).replaceAll("").trim());
         } catch (NumberFormatException e) {
             return Float.NaN;
         }
