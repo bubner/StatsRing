@@ -28,7 +28,8 @@ public final class Util {
 
     public static float parseStat(String stat) {
         try {
-            return Integer.parseInt(stat.replaceAll(",", "").trim());
+            // Remove any commas or format colours
+            return Integer.parseInt(stat.replaceAll("(,|§.|§$)", "").trim());
         } catch (NumberFormatException e) {
             return Float.NaN;
         }
