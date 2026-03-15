@@ -69,7 +69,7 @@ public class StatsRingRenderer implements HudElement {
      * Register all Fabric event listeners.
      */
     public void register() {
-        ClientReceiveMessageEvents.GAME.register(this::onGameMessage);
+        ClientReceiveMessageEvents.ALLOW_GAME.register(this::onGameMessage);
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> resetState());
         ClientTickEvents.END_CLIENT_TICK.register(client -> onTick());
         HudElementRegistry.attachElementAfter(
@@ -79,9 +79,9 @@ public class StatsRingRenderer implements HudElement {
         );
     }
 
-    private void onGameMessage(Component message, boolean overlay) {
-        if (!overlay) return;
-        if (!config.getActive() || !Util.isInSkyBlock()) return;
+    private boolean onGameMessage(Component message, boolean overlay) {
+        if (!overlay) return true;
+        if (!config.getActive() || !Util.isInSkyBlock()) return true;
 
         String msg = message.getString();
 
@@ -115,6 +115,8 @@ public class StatsRingRenderer implements HudElement {
                 manaReadStatus = ManaReadStatus.FROZEN;
             }
         }
+        
+        return true;
     }
 
     private void resetState() {
